@@ -1,11 +1,19 @@
 function Validator (options) {
 
-    formElement = document.querySelector(options.form_selector);
+    var formElement = document.querySelector(options.form_selector);
+    var formRules = {}
 
     function validate(inputElement, rule) {
-        var errorMessage = rule.test(inputElement.value);
+        var errorMessage // = rule.test(inputElement.value);
         var form_group = inputElement.closest(options.form_group);
 
+        // Duyệt qua formRules để xử lý cho nhiều rule và xác định errormessage
+        for(var i= 0; i < formRules[rule.selector].length; i++) {
+            errorMessage = formRules[rule.selector][i](inputElement.value);
+            if(errorMessage)
+                break;
+        }
+        
         // console.log(errorMessage)
         if(errorMessage){
             // Có lỗi => Đổi class để UI lỗi hiển thị
@@ -18,11 +26,21 @@ function Validator (options) {
             form_group.classList.remove(options.error_class);
             form_group.querySelector(options.form_message).innerText = errorMessage;
         }
+        return !errorMessage;
     }
 
     // Xử lý sk (blur, input,...) cho các element dựa vào selector trong rule
     options.rules.forEach(function (rule) {
-        // // Từ selector của form, tìm tới element của ô input
+        // Trong khi duyệt qua các rule thì lấy thêm chúng vào obj 
+        if(formRules[rule.selector]) {
+            // Đã tồn tại => Chèn thêm vào
+            formRules[rule.selector].push(rule.test);
+        } 
+        else {
+            // Nếu chưa tồn tại thì tạo mới, 
+            formRules[rule.selector] = [rule.test]
+        }
+        // Từ selector của form, tìm tới element của ô input
         var inputElement = formElement.querySelector(rule.selector);
         inputElement.onblur = function() {
             validate(inputElement, rule);
@@ -31,9 +49,36 @@ function Validator (options) {
             var form_group = inputElement.closest(options.form_group);
             form_group.classList.remove(options.error_class);
             form_group.querySelector(options.form_message).innerText = '';
-
         }
+        
     });
+
+    // Xử lý sự kiện submit form 
+    // Validate toàn bộ, lấy dữ liệu từ ô input 
+    formElement.onsubmit = function (e) {
+        if(options.onSubmit) {
+            e.preventDefault();
+            var data = {}
+            var isPass = true
+            // validate tất cả các ô input
+            options.rules.forEach(function (rule){
+                var inputElement = formElement.querySelector(rule.selector);
+                if(!validate(inputElement, rule))
+                    isPass = false
+            })
+            // Phải đảm bảo không có lỗi thì mới lấy dữ liệu 
+            // lấy dữ liệu từ ô input để truyền đối số vào cb 
+            console.log(isPass)
+            if(isPass) {
+                console.log("get data")
+                options.rules.forEach(function (rule){
+                    data[rule.selector] = formElement.querySelector(rule.selector).value;
+                }) 
+                options.onSubmit(data);
+                
+            }
+        }
+    }
 }
 
 Validator.isRequire = function (selector) {
