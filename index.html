@@ -154,13 +154,39 @@
                 <span class="form-message"></span>
             </div>
 
+            <div class="form-group">
+                <label class="form-label">Giới tính</label>
+                <div class="checkbox-list">
+                    <input class="radio-gender" name="gender" type="radio" value="male">
+                    <label for="">Nam</label>
+                    <input class="radio-gender" name="gender" type="radio" value="female">
+                    <label for="">Nữ</label>
+                    <input class="radio-gender" name="gender" type="radio" value="other">
+                    <label for="">Khác</label>
+                </div>
+                <span class="form-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Sở thích</label>
+                <div class="checkbox-list">
+                    <input class="checkbox-gender" type="checkbox" value="male">
+                    <label for="">a</label>
+                    <input class="checkbox-gender" type="checkbox" value="female">
+                    <label for="">b</label>
+                    <input class="checkbox-gender" type="checkbox" value="other">
+                    <label for="">c</label>
+                </div>
+                <span class="form-message"></span>
+            </div>
+
             <button class="form-submit">Đăng ký</button>
         </form>
 
     </div>
     <script src="./validator.js"></script>
-    <script> 
-    // cac tham so muon truyen vao de validate
+    <script>
+        // cac tham so muon truyen vao de validate
         Validator({
             form_selector: "#form-1",
             form_group: ".form-group",
@@ -168,13 +194,18 @@
             error_class: "invalid",
             rules: [
                 Validator.isRequire("#fullname"),
+                Validator.isRequire("#email"),
                 Validator.isEmail("#email"),
                 Validator.isPassword("#password"),
-                Validator.isConfirm('#password_confirmation', function() {
+                Validator.isConfirm('#password_confirmation', function () {
                     return document.querySelector("#form-1 #password").value;
                 }),
 
-            ]
+            ],
+            onSubmit: function (data) {
+                // goi API 
+                console.log(data)
+            }
         })
 
     </script>
