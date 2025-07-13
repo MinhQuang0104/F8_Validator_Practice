@@ -170,16 +170,20 @@
             <div class="form-group">
                 <label class="form-label">Sở thích</label>
                 <div class="checkbox-list">
-                    <input class="checkbox-gender" type="checkbox" value="male">
+                    <input class="checkbox-option" type="checkbox" value="a">
                     <label for="">a</label>
-                    <input class="checkbox-gender" type="checkbox" value="female">
+                    <input class="checkbox-option" checked type="checkbox" value="b">
                     <label for="">b</label>
-                    <input class="checkbox-gender" type="checkbox" value="other">
+                    <input class="checkbox-option" checked type="checkbox" value="c">
                     <label for="">c</label>
                 </div>
                 <span class="form-message"></span>
             </div>
-
+            <div class="form-group">
+                <label for="avatar" class="form-label">Avatar</label>
+                <input id="avatar" name="avatar" type="file"class="form-control">
+                <span class="form-message"></span>
+            </div>
             <button class="form-submit">Đăng ký</button>
         </form>
 
@@ -200,6 +204,11 @@
                 Validator.isConfirm('#password_confirmation', function () {
                     return document.querySelector("#form-1 #password").value;
                 }),
+                // Cách truyền truyền dùng input type ở dưới nhằnm lấy ra hết các radio và checkbox (thường có nhiều hơn 1)
+                Validator.isRequire('input[name="gender"]'),
+                Validator.isRequire('input[type="checkbox"]'),
+                Validator.isRequire("#avatar"),
+
 
             ],
             onSubmit: function (data) {
